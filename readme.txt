@@ -1,6 +1,6 @@
 === [if /] Shortcode ===
 
-Stable tag: 160707.450
+Stable tag: 160707.2545
 
 Tested up to: 4.5.3
 Requires at least: 4.5.3
