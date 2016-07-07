@@ -1,0 +1,49 @@
+{
+  "name": "websharks/if-shortcode",
+  "homepage": "https://github.com/websharks/if-shortcode",
+  "description": "[if /] shortcode for WordPress, by WP Sharks™.",
+  "keywords": ["websharks", "wpsharks", "if shortcode"],
+
+  "type": "project",
+  "license": "GPL-3.0+",
+
+  "authors": [{
+    "name": "wpsharks",
+    "homepage": "https://wpsharks.com",
+    "role": "company"
+  }, {
+    "name": "jaswsinc",
+    "homepage": "https://jaswsinc.com",
+    "role": "developer"
+  }, {
+    "name": "raamdev",
+    "homepage": "http://raam.org",
+    "role": "developer"
+  }],
+
+  "support": {
+    "source": "https://github.com/websharks/if-shortcode",
+    "issues": "https://github.com/websharks/if-shortcode/issues"
+  },
+
+  "require-dev": {},
+
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+
+  "autoload": {
+    "psr-4": {
+      "WebSharks\\WpSharks\\IfShortcode\\Classes\\": "src/includes/classes",
+      "WebSharks\\WpSharks\\IfShortcode\\Functions\\": "src/includes/functions",
+      "WebSharks\\WpSharks\\IfShortcode\\Interfaces\\": "src/includes/interfaces",
+      "WebSharks\\WpSharks\\IfShortcode\\Traits\\": "src/includes/traits"
+    }
+  },
+
+  "config": {
+    "vendor-dir": "src/vendor",
+    "preferred-install": "dist"
+  },
+
+  "repositories": []
+}
