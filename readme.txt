@@ -1,6 +1,6 @@
-=== [if /] Shortcode ===
+=== [if] Shortcode ===
 
-Stable tag: 160707.2545
+Stable tag: 160709.39379
 
 Tested up to: 4.5.3
 Requires at least: 4.5.3
@@ -14,7 +14,7 @@ Donate: https://wpsharks.com/donate
 Contributors: wpsharks, JasWSInc, raamdev, KristineDS, reedyseth, sitegeek
 Tags: wpsharks, shortcodes, conditionals, current user, user meta, if shortcode
 
-[if /] shortcode for WordPress.
+[if] shortcode for WordPress.
 
 == Description ==
 

@@ -1,6 +1,6 @@
 <?php
 declare (strict_types = 1);
-namespace WebSharks\WpSharks\IfShortcode\Classes\Base;
+namespace WebSharks\WpSharks\IfShortcode\Traits\Facades;
 
 use WebSharks\WpSharks\IfShortcode\Classes;
 use WebSharks\WpSharks\IfShortcode\Interfaces;
@@ -22,12 +22,13 @@ use WebSharks\Core\WpSharksCore\Traits as CoreTraits;
 use function assert as debug;
 use function get_defined_vars as vars;
 
-/**
- * Pseudo-static facades.
- *
- * @since 160707.2545 Initial release.
- */
-abstract class Facades
+trait WooCommerce
 {
-    use Traits\Facades\WooCommerce;
+    /**
+     * @since 160524 Initial release.
+     */
+    public static function wcProductIdBySku(...$args)
+    {
+        return $GLOBALS[static::class]->Utils->WooCommerce->productIdBySku(...$args);
+    }
 }
