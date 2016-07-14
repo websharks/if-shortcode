@@ -1,3 +1,8 @@
+## v160713.41453
+
+- Updating to the latest WP Sharks Core.
+- Taking advantage of recent improvements in core that further optimize this plugin.
+
 ## v160709.39379
 
 - Updating to latest WPSC and websharks/core.
