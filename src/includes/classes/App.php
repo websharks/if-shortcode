@@ -36,7 +36,7 @@ class App extends SCoreClasses\App
      *
      * @type string Version.
      */
-    const VERSION = '160715.31825'; //v//
+    const VERSION = '160718.59682'; //v//
 
     /**
      * Constructor.
@@ -115,6 +115,12 @@ class App extends SCoreClasses\App
         if (defined('WC_VERSION')) {
             add_action('save_post_product', [$this->Utils->WooCommerce, 'onSaveProduct']);
             add_action('save_post_product_variation', [$this->Utils->WooCommerce, 'onSaveProductVariation']);
+        }
+
+        // Menu page; i.e., settings.
+
+        if ($this->Wp->is_admin) {
+            add_action('admin_menu', [$this->Utils->MenuPage, 'onAdminMenu']);
         }
     }
 }
