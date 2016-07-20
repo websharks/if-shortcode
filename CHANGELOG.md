@@ -1,3 +1,11 @@
+## v160720.38716
+
+- Updating to latest release of WP Sharks Core.
+- Fixed bug in `current_user_can_download=""` and `current_user_bought_product=""` attributes that triggering syntax errors in some rare scenarios.
+- Fixed bug that was causing an `E_NOTICE` level warning about `$limit`.
+- Fixed bug causing a PHP warning in some scenarios related to `s::setTransient()`.
+- Fixed bug that was causing `current_user_can_download=""` to fail when checking for a download sold by a product variation.
+
 ## v160720.23954
 
 - Deepening WooCommerce integration. New attribute `current_user_can_download=""`.
