@@ -23,7 +23,7 @@ use function assert as debug;
 use function get_defined_vars as vars;
 
 /**
- * Shortcode handler.
+ * Shortcode utils.
  *
  * @since 160707.2545 Initial release.
  */
@@ -36,7 +36,7 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
      *
      * @param string
      */
-    public $name = '';
+    public $tag_name;
 
     /**
      * `[else]` shortcode name.
@@ -45,133 +45,133 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
      *
      * @param string
      */
-    protected $else_name = '';
+    protected $else_tag_name;
 
     /**
      * Initialized?
      *
      * @since 160709.39379 Refactor.
      *
-     * @param bool
+     * @param bool|null
      */
-    protected $initialized = false;
+    protected $initialized;
 
     /**
      * Can `eval()`?
      *
      * @since 160709.39379 Refactor.
      *
-     * @param bool
+     * @param bool|null
      */
-    protected $can_eval = false;
+    protected $can_eval;
 
     /**
      * `php=""` attribute enabled?
      *
      * @since 160709.39379 Refactor.
      *
-     * @param bool
+     * @param bool|null
      */
-    protected $enable_php_att = false;
+    protected $enable_php_att;
 
     /**
      * `for_blog=""` attribute enabled?
      *
      * @since 160709.39379 Refactor.
      *
-     * @param bool
+     * @param bool|null
      */
-    protected $enable_for_blog_att = false;
+    protected $enable_for_blog_att;
 
     /**
      * Arbitrary attributes enabled?
      *
      * @since 160709.39379 Refactor.
      *
-     * @param bool
+     * @param bool|null
      */
-    protected $enable_arbitrary_atts = false;
+    protected $enable_arbitrary_atts;
 
     /**
      * Whitelisted arbitrary attributes.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param array
+     * @param array|null
      */
-    protected $whitelisted_arbitrary_atts = [];
+    protected $whitelisted_arbitrary_atts;
 
     /**
      * Debug att default.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param string
+     * @param string|null
      */
-    protected $debug_att_default = '';
+    protected $debug_att_default;
 
     /**
      * Current user ID.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param int
+     * @param int|null
      */
-    protected $current_user_id = 0;
+    protected $current_user_id;
 
     /**
      * Current shortcode depth.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param int
+     * @param int|null
      */
-    protected $current_depth = 0;
+    protected $current_depth;
 
     /**
      * Current shortcode.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param string
+     * @param string|null
      */
-    protected $current_shortcode = '';
+    protected $current_shortcode;
 
     /**
      * Current raw attributes.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param array
+     * @param array|null
      */
-    protected $current_raw_atts = [];
+    protected $current_raw_atts;
 
     /**
      * Current attributes.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param array
+     * @param array|null
      */
-    protected $current_atts = [];
+    protected $current_atts;
 
     /**
      * Current conditions.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param string
+     * @param string|null
      */
-    protected $current_conditions = '';
+    protected $current_conditions;
 
     /**
      * Current errors.
      *
      * @since 160709.39379 Refactor.
      *
-     * @param array
+     * @param array|null
      */
-    protected $current_errors = [];
+    protected $current_errors;
 
     /**
      * Class constructor.
@@ -184,8 +184,8 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
     {
         parent::__construct($App);
 
-        $this->name      = s::applyFilters('name', 'if');
-        $this->else_name = s::applyFilters('else_name', 'else');
+        $this->tag_name      = s::applyFilters('tag_name', 'if');
+        $this->else_tag_name = s::applyFilters('else_tag_name', 'else');
     }
 
     /**
@@ -258,8 +258,12 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
             // `1|on|yes|true|0|off|no|false` (or `verbose`).
         ];
         $raw_atts = $atts; // Copy.
-        $atts     = c::mbTrim(c::unescHtml($atts));
+        $atts     = c::unescHtml($atts);
         $atts     = array_merge($default_atts, $atts);
+
+        if ($shortcode) { // NOTE: We don't use `shortcode_atts()` on purpose.
+            $atts = apply_filters('shortcode_atts_'.$shortcode, $atts, $default_atts, $raw_atts, $shortcode);
+        } // However, this will still apply the filter like `shortcode_atts()` would do.
 
         $atts['_for_blog'] = (int) $atts['_for_blog'];
         $atts['_satisfy']  = $atts['_satisfy'] === 'any' ? 'any' : 'all';
@@ -280,20 +284,6 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
         $this->current_atts       = $atts;
         $this->current_conditions = '';
         $this->current_errors     = [];
-
-        /*
-         * Parse content into if/else conditions.
-         */
-        $else_tag = '['.str_repeat('_', $this->current_depth).$this->else_name.']';
-
-        if (mb_strpos($content, $else_tag) !== false) {
-            list($content_if, $content_else) = explode($else_tag, $content, 2);
-            $content_if                      = c::htmlTrim($content_if);
-            $content_else                    = c::htmlTrim($content_else);
-        } else {
-            $content_if   = c::htmlTrim($content);
-            $content_else = ''; // Default (empty).
-        }
 
         /*
          * Initial validations.
@@ -390,7 +380,7 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
                 case 'current_user_is_paying_customer':
                     if ($this->current_atts[$_att_key]) {
                         $_negating = $this->current_atts[$_att_key] === 'false' ? '!' : '';
-                        $this->appendConditions($_negating.'('.(int) $this->Wp->is_wc_active.' && '.$this->current_user_id.' ? (bool) get_user_meta('.$this->current_user_id.', \'paying_customer\', true) : false)');
+                        $this->appendConditions($_negating.'('.(int) $this->Wp->is_woocommerce_active.' && '.$this->current_user_id.' ? (bool) get_user_meta('.$this->current_user_id.', \'paying_customer\', true) : false)');
                     }
                     break;
 
@@ -400,7 +390,7 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
                 case 'current_user_bought_product':
                     if ($this->current_atts[$_att_key]) {
                         $this->appendConditions($this->simpleExpr($_att_key, function ($product_id_or_sku) {
-                            return '('.(int) $this->Wp->is_wc_active.' && '.$this->current_user_id.' ? '.a::class.'::wcCustomerBoughtProduct('.$this->current_user_id.', '.c::sQuote($product_id_or_sku).') : false)';
+                            return '('.(int) $this->Wp->is_woocommerce_active.' && '.$this->current_user_id.' ? '.a::class.'::wcCustomerBoughtProduct('.$this->current_user_id.', '.c::sQuote($product_id_or_sku).') : false)';
                         }));
                     }
                     break;
@@ -411,7 +401,7 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
                 case 'current_user_can_download':
                     if ($this->current_atts[$_att_key]) {
                         $this->appendConditions($this->simpleExpr($_att_key, function ($product_id_or_sku) {
-                            return '('.(int) $this->Wp->is_wc_active.' && '.$this->current_user_id.' ? '.a::class.'::wcCustomerCanDownload('.$this->current_user_id.', '.c::sQuote($product_id_or_sku).') : false)';
+                            return '('.(int) $this->Wp->is_woocommerce_active.' && '.$this->current_user_id.' ? '.a::class.'::wcCustomerCanDownload('.$this->current_user_id.', '.c::sQuote($product_id_or_sku).') : false)';
                         }));
                     }
                     break;
@@ -458,7 +448,6 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
         /*
          * Evaluate, if possible.
          */
-
         try { // We can catch problems in PHP 7+ via exception.
             if (!$this->current_errors && $this->current_conditions && $this->can_eval) {
                 $conditions_true = c::phpEval('return ('.$this->current_conditions.');');
@@ -471,51 +460,80 @@ class Shortcode extends SCoreClasses\SCore\Base\Core
         }
 
         /*
-         * Verbose debug output (if enabled).
+         * Verbose debug output?
          */
         if ($this->current_atts['_debug'] === 'verbose') {
             $debug_verbose = '<pre style="padding:1em; border-radius:.25em; max-width:100%; overflow:auto; max-width:100%; overflow:auto;">'.
-                                sprintf(__('<code>[%1$s]</code> Shortcode Verbose', 'if-shortcode'), esc_html($this->name)).'<br />'.esc_html($this->recreate()).'<br /><br />'.
-                                sprintf(__('<code>[%1$s]</code> Shortcode Atts', 'if-shortcode'), esc_html($this->name)).'<br />'.c::mbTrim(c::dump($this->current_atts, true), "\n").'<br /><br />'.
-                                sprintf(__('<code>[%1$s]</code> Shortcode Conditions', 'if-shortcode'), esc_html($this->name)).'<br />'.esc_html($this->current_conditions).
+                                sprintf(__('<code>[%1$s]</code> Shortcode Verbose', 'if-shortcode'), esc_html($this->tag_name)).'<br />'.esc_html($this->recreate()).'<br /><br />'.
+                                sprintf(__('<code>[%1$s]</code> Shortcode Atts', 'if-shortcode'), esc_html($this->tag_name)).'<br />'.c::mbTrim(c::dump($this->current_atts, true), "\n").'<br /><br />'.
+                                sprintf(__('<code>[%1$s]</code> Shortcode Conditions', 'if-shortcode'), esc_html($this->tag_name)).'<br />'.esc_html($this->current_conditions).
                              '</pre>';
         } else {
             $debug_verbose = ''; // Default behavior (empty string).
         }
 
         /*
-         * Deal with errors (if applicable).
+         * Do we have any errors?
          */
         if ($this->current_errors) {
+            /*
+             * Returns errors to browser?
+             */
             if ($this->current_atts['_debug']) {
-                $error_colors     = 'background:#b30000; color:#FFFFFF;';
-                $error_pre_colors = 'background:#cccccc; color:#000000;';
-                $error_li_first   = '<li style="background:inherit; color:inherit; margin:0; padding:0;">';
-                $error_li         = '<li style="background:inherit; color:inherit; margin:1em 0 0 0; padding:0;">';
-
+                //
                 return $debug_verbose.// Verbose debug output (if enabled).
-                        '<div style="'.esc_attr($error_colors).' padding:1em; border-radius:.25em;">'.
+                        '<div style="background:#b30000; color:#ffffff; padding:1em; border-radius:.25em;">'.
                             '<h4 style="background:inherit; color:inherit; margin:0 0 .5em 0; padding:0 0 .5em 0; line-height:1em; border-bottom:1px solid;">'.
-                                sprintf(_n('<code>[%1$s]</code> Shortcode Error', '<code>[%1$s]</code> Shortcode Errors', count($this->current_errors), 'if-shortcode'), esc_html($this->name)).
+                                sprintf(_n('<code>[%1$s]</code> Shortcode Error', '<code>[%1$s]</code> Shortcode Errors', count($this->current_errors), 'if-shortcode'), esc_html($this->tag_name)).
                             '</h4>'.
-                            '<pre style="'.esc_attr($error_pre_colors).' padding:1em; margin:0 0 .5em 0; border-radius:.25em; max-width:100%; overflow:auto;">'.
+                            '<pre style="background:#ffffff; color:#000000; padding:1em; margin:0 0 .5em 0; border-radius:.25em; max-width:100%; overflow:auto;">'.
                                 esc_html($this->recreate()).
                             '</pre>'.
                             '<ul style="margin:0 0 0 2em; padding:0; background:inherit; color:inherit;">'.
-                                $error_li_first.implode('</li>'.$error_li, c::markdown($this->current_errors, ['no_p' => true])).'</li>'.
+                                '<li style="background:inherit; color:inherit; margin:0; padding:0;">'.
+                                    implode(// Deals with more than a single error.
+                                        '</li><li style="background:inherit; color:inherit; margin:1em 0 0 0; padding:0;">',
+                                        c::markdown($this->current_errors, ['no_p' => true])
+                                    ).
+                                '</li>'.
                             '</ul>'.
                         '</div>';
+            /*
+             * Else, if debugging, trigger PHP warning.
+             */
             } elseif ($this->App->Config->©debug['©enable']) {
                 debug(0, c::issue(vars(), implode("\n", $this->current_errors)));
                 trigger_error(implode("\n", $this->current_errors), E_USER_WARNING);
             }
             return ''; // Default behavior; fail silently with conditions forced to a false state.
         }
+
         /*
-         * Return shortcode output (if no errors above).
+         * Parse content into if/else.
          */
-        return $debug_verbose.// Verbose debug output (if enabled).
-               do_shortcode($conditions_true ? $content_if : $content_else);
+        $else_tag = '['.str_repeat('_', $this->current_depth).$this->else_tag_name.']';
+
+        if (mb_strpos($content, $else_tag) !== false) {
+            list($content_if, $content_else) = explode($else_tag, $content, 2);
+        } else {
+            $content_if   = $content; // No `[else]` tag.
+            $content_else = ''; // Default (empty).
+        }
+
+        /*
+         * Apply shortcode content filters.
+         */
+        if ($conditions_true && $content_if) {
+            $content_if = s::applyFilters('content', $content_if);
+        } elseif (!$conditions_true && $content_else) {
+            $content_else = s::applyFilters('content', $content_else);
+        }
+
+        /*
+         * Return shortcode output.
+         */
+        $output        = $conditions_true ? $content_if : $content_else;
+        return $output = $debug_verbose.$output; // With possible debug info.
     }
 
     /**

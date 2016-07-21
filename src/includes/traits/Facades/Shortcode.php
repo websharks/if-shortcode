@@ -1,6 +1,6 @@
 <?php
 declare (strict_types = 1);
-namespace WebSharks\WpSharks\IfShortcode\Classes\Base;
+namespace WebSharks\WpSharks\IfShortcode\Traits\Facades;
 
 use WebSharks\WpSharks\IfShortcode\Classes;
 use WebSharks\WpSharks\IfShortcode\Interfaces;
@@ -22,13 +22,13 @@ use WebSharks\Core\WpSharksCore\Traits as CoreTraits;
 use function assert as debug;
 use function get_defined_vars as vars;
 
-/**
- * Pseudo-static facades.
- *
- * @since 160707.2545 Initial release.
- */
-abstract class Facades
+trait Shortcode
 {
-    use Traits\Facades\Shortcode;
-    use Traits\Facades\WooCommerce;
+    /**
+     * @since 160720 Shortcode utils.
+     */
+    public static function shortcodeTagName()
+    {
+        return $GLOBALS[static::class]->Utils->Shortcode->tag_name;
+    }
 }

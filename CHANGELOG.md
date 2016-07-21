@@ -1,10 +1,20 @@
+## v160721.59154
+
+- Making it possible to customize filters (via options page) that are applied to content inside `[if]` shortcodes.
+- Adding support for Jetpack Markdown inside `[if][/if]` conditionals.
+- Bumping minimum required WP Sharks Core to v160720.50843.
+- Now applying `the_content` filter recursively, to content inside conditionals.
+- Integrating a filter backup-state handler to avoid problems with inner content filters.
+- Moving many parts of this plugin to the `template_redirect` hook, as a way to further optimize it.
+
 ## v160720.38716
 
 - Updating to latest release of WP Sharks Core.
-- Fixed bug in `current_user_can_download=""` and `current_user_bought_product=""` attributes that triggering syntax errors in some rare scenarios.
+- Fixed bug in `current_user_can_download=""` and `current_user_bought_product=""` attributes that was triggering syntax errors in some rare scenarios.
 - Fixed bug that was causing an `E_NOTICE` level warning about `$limit`.
 - Fixed bug causing a PHP warning in some scenarios related to `s::setTransient()`.
 - Fixed bug that was causing `current_user_can_download=""` to fail when checking for a download sold by a product variation.
+-
 
 ## v160720.23954
 
