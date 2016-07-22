@@ -1,3 +1,8 @@
+## v160722.45266
+
+- Enhancing support for nested `[_if]` tags by improving compatibility with `wpautop()`.
+- Optimizing hook priorities for improved compatibility with a variety of other plugins for WordPress.
+
 ## v160721.62161
 
 - Making it possible to customize filters (via options page) that are applied to content inside `[if]` shortcodes.

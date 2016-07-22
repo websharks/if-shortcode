@@ -4,7 +4,7 @@
  *
  * @wp-plugin
  *
- * Version: 160721.62161
+ * Version: 160722.45266
  * Text Domain: if-shortcode
  * Plugin Name: [if] Shortcode Pro
  *
@@ -14,7 +14,7 @@
  * License: GPL-3.0+
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  *
- * Plugin URI: https://wpsharks.com/product/if-shortcode
+ * Plugin URI: https://wpsharks.com/product/if-shortcode-pro
  * Description: [if] shortcode for WordPress.
  */
 // PHP v5.2 compatible.
