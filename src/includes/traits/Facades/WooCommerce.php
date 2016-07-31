@@ -1,4 +1,10 @@
 <?php
+/**
+ * WooCommerce.
+ *
+ * @author @jaswsinc
+ * @copyright WP Sharks™
+ */
 declare (strict_types = 1);
 namespace WebSharks\WpSharks\IfShortcode\Traits\Facades;
 
@@ -22,10 +28,19 @@ use WebSharks\Core\WpSharksCore\Traits as CoreTraits;
 use function assert as debug;
 use function get_defined_vars as vars;
 
+/**
+ * WooCommerce.
+ *
+ * @since 160524 Initial release.
+ */
 trait WooCommerce
 {
     /**
      * @since 160524 Initial release.
+     *
+     * @param mixed ...$args Variadic args to underlying utility.
+     *
+     * @see Classes\Utils\WooCommerce::productIdBySku()
      */
     public static function wcProductIdBySku(...$args)
     {
@@ -34,6 +49,10 @@ trait WooCommerce
 
     /**
      * @since 160720 Initial release.
+     *
+     * @param mixed ...$args Variadic args to underlying utility.
+     *
+     * @see Classes\Utils\WooCommerce::customerBoughtProduct()
      */
     public static function wcCustomerBoughtProduct(...$args)
     {
@@ -42,6 +61,10 @@ trait WooCommerce
 
     /**
      * @since 160720 Initial release.
+     *
+     * @param mixed ...$args Variadic args to underlying utility.
+     *
+     * @see Classes\Utils\WooCommerce::customerCanDownload()
      */
     public static function wcCustomerCanDownload(...$args)
     {

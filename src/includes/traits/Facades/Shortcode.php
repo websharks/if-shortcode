@@ -1,4 +1,10 @@
 <?php
+/**
+ * Shortcode.
+ *
+ * @author @jaswsinc
+ * @copyright WP Sharks™
+ */
 declare (strict_types = 1);
 namespace WebSharks\WpSharks\IfShortcode\Traits\Facades;
 
@@ -22,10 +28,16 @@ use WebSharks\Core\WpSharksCore\Traits as CoreTraits;
 use function assert as debug;
 use function get_defined_vars as vars;
 
+/**
+ * Shortcode.
+ *
+ * @since 160720 Shortcode utils.
+ */
 trait Shortcode
 {
     /**
      * @since 160720 Shortcode utils.
+     * @see Classes\Utils\Shortcode::$tag_name
      */
     public static function shortcodeTagName()
     {

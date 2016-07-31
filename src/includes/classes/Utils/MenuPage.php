@@ -1,4 +1,10 @@
 <?php
+/**
+ * Menu page utils.
+ *
+ * @author @jaswsinc
+ * @copyright WP Sharks™
+ */
 declare (strict_types = 1);
 namespace WebSharks\WpSharks\IfShortcode\Classes\Utils;
 
@@ -37,11 +43,8 @@ class MenuPage extends SCoreClasses\SCore\Base\Core
     public function onAdminMenu()
     {
         s::addMenuPageItem([
-            'auto_prefix'   => false,
             'parent_page'   => 'options-general.php',
-            'page_title'    => $this->App->Config->©brand['©name'],
-            'menu_title'    => $this->App->Config->©brand['©name'],
-            'template_file' => 'admin/menu-pages/settings/default.php',
+            'template_file' => 'admin/menu-pages/options/default.php',
 
             'tabs' => [
                 'default' => sprintf(__('%1$s', 'if-shortcode'), esc_html($this->App->Config->©brand['©name'])),
