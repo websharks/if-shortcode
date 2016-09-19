@@ -1,12 +1,12 @@
 <?php
 /**
- * Facades.
+ * Attr utils.
  *
  * @author @jaswsinc
  * @copyright WP Sharks™
  */
 declare (strict_types = 1);
-namespace WebSharks\WpSharks\IfShortcode\Classes\Base;
+namespace WebSharks\WpSharks\IfShortcode\Classes\Utils;
 
 use WebSharks\WpSharks\IfShortcode\Classes;
 use WebSharks\WpSharks\IfShortcode\Interfaces;
@@ -29,13 +29,23 @@ use function assert as debug;
 use function get_defined_vars as vars;
 
 /**
- * Pseudo-static facades.
+ * Attr utils.
  *
- * @since 160707.2545 Initial release.
+ * @since 160919.18816 Attr utils.
  */
-abstract class Facades
+class AttrFuncs extends SCoreClasses\SCore\Base\Core
 {
-    use Traits\Facades\AttrFuncs;
-    use Traits\Facades\Shortcode;
-    use Traits\Facades\WooCommerce;
+    /**
+     * Request var.
+     *
+     * @since 160919.18816 Attr utils.
+     *
+     * @param string $key Request key.
+     *
+     * @return string Request value (as a string).
+     */
+    public function requestVar(string $key): string
+    {
+        return c::unslash((string) ($_REQUEST[$key] ?? ''));
+    }
 }
